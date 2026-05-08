@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 540" font-family="ui-monospace, 'JetBrains Mono', 'SF Mono', Consolas, monospace">
+  <defs>
+    <style>
+      .bg { fill: #0B0C10; }
+      .surface { fill: #1F2833; }
+      .border { stroke: #45A29E; stroke-width: 1.5; fill: none; }
+      .border-accent { stroke: #66FCF1; stroke-width: 2; fill: none; }
+      .text-primary { fill: #C5C6C7; font-size: 13px; }
+      .text-accent { fill: #66FCF1; font-size: 15px; font-weight: 600; }
+      .text-dim { fill: #45A29E; font-size: 11px; }
+      .text-title { fill: #66FCF1; font-size: 20px; font-weight: 700; letter-spacing: 1px; }
+      .arrow { stroke: #66FCF1; stroke-width: 1.5; fill: none; marker-end: url(#arr); }
+      .arrow-dim { stroke: #45A29E; stroke-width: 1; fill: none; marker-end: url(#arr-dim); stroke-dasharray: 4,3; }
+    </style>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#66FCF1"/>
+    </marker>
+    <marker id="arr-dim" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#45A29E"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="540" class="bg"/>
+
+  <text x="460" y="40" text-anchor="middle" class="text-title">RATE-LIMIT-SHIELD :: ARCHITECTURE</text>
+  <line x1="180" y1="55" x2="740" y2="55" class="border"/>
+
+  <!-- Caller -->
+  <rect x="350" y="85" width="220" height="50" rx="6" class="surface"/>
+  <rect x="350" y="85" width="220" height="50" rx="6" class="border-accent"/>
+  <text x="460" y="106" text-anchor="middle" class="text-accent">Application</text>
+  <text x="460" y="124" text-anchor="middle" class="text-dim">shield.call(openai.chat.completions.create, ...)</text>
+
+  <path d="M460,140 L460,170" class="arrow"/>
+
+  <!-- Shield facade -->
+  <rect x="280" y="180" width="360" height="60" rx="6" class="surface"/>
+  <rect x="280" y="180" width="360" height="60" rx="6" class="border-accent"/>
+  <text x="460" y="205" text-anchor="middle" class="text-accent">Shield (facade)</text>
+  <text x="460" y="225" text-anchor="middle" class="text-dim">orchestrates: gate -&gt; call -&gt; record -&gt; retry</text>
+
+  <!-- Three components -->
+  <rect x="60" y="290" width="220" height="100" rx="6" class="surface"/>
+  <rect x="60" y="290" width="220" height="100" rx="6" class="border"/>
+  <text x="170" y="315" text-anchor="middle" class="text-accent">CircuitBreaker</text>
+  <text x="170" y="338" text-anchor="middle" class="text-primary">CLOSED -&gt; OPEN</text>
+  <text x="170" y="356" text-anchor="middle" class="text-primary">-&gt; HALF_OPEN -&gt; CLOSED</text>
+  <text x="170" y="375" text-anchor="middle" class="text-dim">fail-fast on upstream burn</text>
+
+  <rect x="340" y="290" width="220" height="100" rx="6" class="surface"/>
+  <rect x="340" y="290" width="220" height="100" rx="6" class="border"/>
+  <text x="450" y="315" text-anchor="middle" class="text-accent">TokenBucket</text>
+  <text x="450" y="338" text-anchor="middle" class="text-primary">capacity + refill_rate</text>
+  <text x="450" y="356" text-anchor="middle" class="text-primary">try_acquire() / wait_time()</text>
+  <text x="450" y="375" text-anchor="middle" class="text-dim">smooth rate gate</text>
+
+  <rect x="620" y="290" width="220" height="100" rx="6" class="surface"/>
+  <rect x="620" y="290" width="220" height="100" rx="6" class="border"/>
+  <text x="730" y="315" text-anchor="middle" class="text-accent">RetryPolicy</text>
+  <text x="730" y="338" text-anchor="middle" class="text-primary">exponential backoff</text>
+  <text x="730" y="356" text-anchor="middle" class="text-primary">+ full jitter</text>
+  <text x="730" y="375" text-anchor="middle" class="text-dim">avoid retry storms</text>
+
+  <path d="M380,240 L170,290" class="arrow-dim"/>
+  <path d="M460,240 L450,290" class="arrow-dim"/>
+  <path d="M540,240 L730,290" class="arrow-dim"/>
+
+  <!-- LLM-aware layer -->
+  <rect x="200" y="430" width="520" height="60" rx="6" class="surface"/>
+  <rect x="200" y="430" width="520" height="60" rx="6" stroke="#FBBF24" stroke-width="1.5" fill="none"/>
+  <text x="460" y="455" text-anchor="middle" fill="#FBBF24" font-size="14" font-weight="600">LLMShield (per-model wrapper)</text>
+  <text x="460" y="475" text-anchor="middle" class="text-dim">RPM/TPM limits per model + parse_retry_after(headers)</text>
+
+  <path d="M460,400 L460,430" class="arrow-dim"/>
+</svg>

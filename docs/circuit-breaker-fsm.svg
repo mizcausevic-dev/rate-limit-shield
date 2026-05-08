@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 480" font-family="ui-monospace, 'JetBrains Mono', 'SF Mono', Consolas, monospace">
+  <defs>
+    <style>
+      .bg { fill: #0B0C10; }
+      .text-title { fill: #66FCF1; font-size: 18px; font-weight: 700; letter-spacing: 1px; }
+      .text-dim { fill: #45A29E; font-size: 11px; }
+      .label { fill: #C5C6C7; font-size: 11px; font-style: italic; }
+      .arrow { stroke: #66FCF1; stroke-width: 1.5; fill: none; marker-end: url(#a); }
+      .arrow-fail { stroke: #F87171; stroke-width: 1.5; fill: none; marker-end: url(#a-red); }
+      .arrow-success { stroke: #34D399; stroke-width: 1.5; fill: none; marker-end: url(#a-green); }
+    </style>
+    <marker id="a" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#66FCF1"/>
+    </marker>
+    <marker id="a-red" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#F87171"/>
+    </marker>
+    <marker id="a-green" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#34D399"/>
+    </marker>
+  </defs>
+
+  <rect width="900" height="480" class="bg"/>
+
+  <text x="450" y="40" text-anchor="middle" class="text-title">CIRCUIT BREAKER :: STATE MACHINE</text>
+  <line x1="180" y1="55" x2="720" y2="55" stroke="#45A29E" stroke-width="1"/>
+
+  <!-- CLOSED -->
+  <circle cx="180" cy="240" r="80" fill="#1F2833" stroke="#34D399" stroke-width="2.5"/>
+  <text x="180" y="230" text-anchor="middle" fill="#34D399" font-size="18" font-weight="700">CLOSED</text>
+  <text x="180" y="252" text-anchor="middle" class="text-dim">all calls pass through</text>
+  <text x="180" y="272" text-anchor="middle" class="text-dim">count failures</text>
+
+  <!-- OPEN -->
+  <circle cx="720" cy="240" r="80" fill="#1F2833" stroke="#F87171" stroke-width="2.5"/>
+  <text x="720" y="230" text-anchor="middle" fill="#F87171" font-size="18" font-weight="700">OPEN</text>
+  <text x="720" y="252" text-anchor="middle" class="text-dim">reject all calls</text>
+  <text x="720" y="272" text-anchor="middle" class="text-dim">CircuitOpen exception</text>
+
+  <!-- HALF_OPEN -->
+  <circle cx="450" cy="380" r="80" fill="#1F2833" stroke="#FBBF24" stroke-width="2.5"/>
+  <text x="450" y="370" text-anchor="middle" fill="#FBBF24" font-size="16" font-weight="700">HALF_OPEN</text>
+  <text x="450" y="392" text-anchor="middle" class="text-dim">probe with 1 call</text>
+  <text x="450" y="412" text-anchor="middle" class="text-dim">decide on result</text>
+
+  <!-- CLOSED -> OPEN (failures exceeded threshold) -->
+  <path d="M260,240 L640,240" class="arrow-fail"/>
+  <text x="450" y="225" text-anchor="middle" fill="#F87171" font-size="12" font-weight="600">N failures &gt;= threshold</text>
+
+  <!-- OPEN -> HALF_OPEN (timeout elapsed) -->
+  <path d="M675,310 Q580,360 510,360" class="arrow"/>
+  <text x="615" y="345" text-anchor="middle" fill="#66FCF1" font-size="11" font-weight="600">recovery_timeout elapsed</text>
+
+  <!-- HALF_OPEN -> CLOSED (probe succeeded) -->
+  <path d="M388,355 Q280,310 240,300" class="arrow-success"/>
+  <text x="285" y="345" text-anchor="middle" fill="#34D399" font-size="11" font-weight="600">probe succeeded</text>
+
+  <!-- HALF_OPEN -> OPEN (probe failed) -->
+  <path d="M525,355 Q620,320 670,310" class="arrow-fail"/>
+  <text x="610" y="380" text-anchor="middle" fill="#F87171" font-size="11" font-weight="600">probe failed</text>
+
+  <!-- Self-loops -->
+  <path d="M180,160 a 30 30 0 1 1 0 -1" fill="none" stroke="#34D399" stroke-width="1.2" marker-end="url(#a-green)"/>
+  <text x="180" y="140" text-anchor="middle" fill="#34D399" font-size="10" font-style="italic">success: reset counter</text>
+
+  <path d="M720,160 a 30 30 0 1 1 0 -1" fill="none" stroke="#F87171" stroke-width="1.2" marker-end="url(#a-red)"/>
+  <text x="720" y="140" text-anchor="middle" fill="#F87171" font-size="10" font-style="italic">stays open</text>
+
+  <!-- Bottom legend -->
+  <line x1="100" y1="445" x2="800" y2="445" stroke="#45A29E" stroke-width="1"/>
+  <text x="450" y="468" text-anchor="middle" class="text-dim">circuit breakers cap blast-radius when an upstream vendor degrades - faster recovery, lower latency on the dead path</text>
+</svg>
